@@ -1,0 +1,54 @@
+### NOTE ###
+# must relink teed, vendor.keymaster-3-0, keymaster_attestation-1-1
+
+service vendor.keymaster-3-0 /system/bin/hw/android.hardware.keymaster@3.0-service
+    class early_hal
+    #user system
+    #group system drmrpc
+    seclabel u:r:recovery:s0
+	disabled
+
+service keymaster_attestation-1-1 /system/bin/hw/vendor.mediatek.hardware.keymaster_attestation@1.1-service
+    interface vendor.mediatek.hardware.keymaster_attestation@1.1::IKeymasterDevice default
+    class hal
+    #user system
+    #group system
+    seclabel u:r:recovery:s0
+    disabled
+
+service servicemanager /sbin/servicemanager
+    user root
+    group root readproc
+    writepid /dev/cpuset/system-background/tasks
+    seclabel u:r:recovery:s0
+	disabled
+
+service hwservicemanager /sbin/hwservicemanager
+    user root
+    group root
+    onrestart setprop hwservicemanager.ready false
+    seclabel u:r:recovery:s0
+    disabled
+
+service teed /sbin/teed \
+    --datapath /data/vendor/t6/fs \
+    --sptapath /data/vendor/t6/app \
+    --systapath /etc/t6 \
+    --prot /tmp-pst/t6 \
+    --logpath /data/vendor/t6/tkcore.log \
+    --proprefix vendor.trustkernel
+	#user system
+	#group system
+	class core
+    seclabel u:r:recovery:s0
+	disabled
+
+on fs
+    mkdir /tmp-pst
+	mount ext4 /dev/block/platform/bootdevice/by-name/persist /tmp-pst
+    start teed
+    start servicemanager
+	start hwservicemanager
+	start vendor.keymaster-3-0
+	start keymaster_attestation-1-1
+
