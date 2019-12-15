@@ -1,5 +1,5 @@
 /recovery		emmc /dev/block/platform/bootdevice/by-name/recovery	flags=backup=1;display=recovery
-/para			emmc /dev/block/platform/bootdevice/by-name/para		flags=backup=1;display=para
+/misc			emmc /dev/block/platform/bootdevice/by-name/para		flags=backup=1;display=misc
 /expdb			emmc /dev/block/platform/bootdevice/by-name/expdb
 /frp			emmc /dev/block/platform/bootdevice/by-name/frp			flags=backup=1;display=frp
 /nvcfg			ext4 /dev/block/platform/bootdevice/by-name/nvcfg		flags=backup=1;display=nvcfg
